@@ -26,6 +26,8 @@ The strongest demonstrated example: the assistant answered a biology exam questi
 
 ## Run the notebook
 
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Ekam-Bindra/campus-ai-made-simple/blob/main/Campus_AI_Made_Simple.ipynb)
+
 1. Download `Campus_AI_Made_Simple.ipynb` and upload it to Google Colab, or open it locally in Jupyter.
 2. Run the installation and setup cells. Enter your own Gemini API key in the hidden prompt. Do not paste a key into a public cell or commit one.
 3. Run lessons in order. The notebook includes its helper files and fictional records.
