@@ -105,4 +105,4 @@ PASS: real calculator result and actual S1 text returned to scripted endpoint
 
 The original Lesson 6 bridge failed before contacting a model: the installed SDK attempted to deep-copy a live MCP session and raised TypeError involving an asyncio.Future. The notebook now discovers MCP schemas and uses an explicit function-call loop instead. The corrected bridge passed the scripted-response integration test.
 
-The MCP subprocess also received an isolated dependency directory for these tests; a normal Colab pip installation does not need that testing path.
+The test script resolves the installed MCP package location and forwards its import path to the subprocess. A normal Colab lesson uses packages installed in the runtime and does not require a scratch-only test directory.

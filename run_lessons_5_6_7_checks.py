@@ -14,9 +14,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 PROJECT = ROOT / 'campus_ai_starter' if (ROOT / 'campus_ai_starter').is_dir() else ROOT
 DEPS = ROOT / 'test_dependencies'
-sys.path.insert(0, str(DEPS))
+if DEPS.is_dir():
+    sys.path.insert(0, str(DEPS))
 sys.path.insert(0, str(PROJECT))
 import httpx
+import mcp
 from google import genai
 from google.genai import types
 from campus_ai import CampusAssistant, DOCUMENTS, required_exam_score
@@ -113,14 +115,19 @@ assert 'TOOL CALL: required_exam_score' in lesson5 and '110.0' in lesson5
 record('Lesson 5 exact notebook cell; scripted model, real SDK and calculator',lesson5)
 
 async def checks():
-    # MCP subprocess must load packages installed in this isolated test directory.
-    os.environ['PYTHONPATH'] = str(DEPS)
+    # Resolve the installed MCP package rather than assuming a scratch-only folder.
+    # The subprocess uses the same Python executable; explicitly forward import paths
+    # because the MCP SDK filters inherited environment variables.
+    mcp_import_root = str(Path(mcp.__file__).resolve().parent.parent)
+    subprocess_pythonpath = os.pathsep.join(filter(None, [
+        mcp_import_root, os.environ.get('PYTHONPATH', '')]))
+    namespace['subprocess_pythonpath'] = subprocess_pythonpath
     os.chdir(PROJECT)
     # Exact discovery cell; real subprocess and protocol, no model simulation here.
-    # The MCP SDK filters inherited env vars, so provide this testing path explicitly.
+    # The MCP SDK filters inherited env vars, so provide the import path explicitly.
     source = ''.join(nb['cells'][16]['source'])
     source = source.replace('args=[str(Path("campus_mcp_server.py").resolve())])',
-        'args=[str(Path("campus_mcp_server.py").resolve())], env={"PYTHONPATH": str(DEPS)})')
+        'args=[str(Path("campus_mcp_server.py").resolve())], env={"PYTHONPATH": subprocess_pythonpath})')
     output = io.StringIO()
     with contextlib.redirect_stdout(output):
         await eval(compile(source,'mcp-discovery','exec',flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT),namespace)
@@ -171,6 +178,7 @@ lines+=['## Remaining live checks','',
         '- Real embeddings, genuine tool selection, final source citations, and task constraints in Lesson 7.',
         '- Rate limits, account access, model-specific behavior, and live response latency.',
         '', 'The original Lesson 6 bridge failed before contacting a model: the installed SDK attempted to deep-copy a live MCP session and raised TypeError involving an asyncio.Future. The notebook now discovers MCP schemas and uses an explicit function-call loop instead. The corrected bridge passed the scripted-response integration test.','',
-        'The MCP subprocess also received an isolated dependency directory for these tests; a normal Colab pip installation does not need that testing path.','']
+        'The test script resolves the installed MCP package location and forwards its import path to the subprocess. A normal Colab lesson uses packages installed in the runtime and does not require a scratch-only test directory.','']
 destination.write_text('\n'.join(lines),encoding='utf-8')
 print('ALL CHECKS PASSED. Report:',destination)
+
