@@ -6,6 +6,10 @@ I’m Bishanmeet Bindra, an MIS student at UGA. Learning through workshops in Te
 
 ![Project cover](assets/project-cover.png)
 
+## Start from scratch
+
+Follow the [step-by-step learning guide](LEARNING_GUIDE.md) for setup, all seven lessons, practice changes, expected behavior, and troubleshooting. No previous AI experience or video recording is required.
+
 ## What you can learn
 
 | Lesson | Try it | What it teaches |
@@ -44,6 +48,7 @@ The notebook uses `gemini-flash-latest` and `gemini-embedding-001`. Model availa
 
 ## Project files
 
+- `LEARNING_GUIDE.md`: beginner walkthrough and practice exercises for all seven lessons.
 - `Campus_AI_Made_Simple.ipynb`: seven interactive lessons.
 - `campus_ai.py`: prompting, preference storage, embeddings, retrieval, calculator, and agent helpers.
 - `campus_mcp_server.py`: local MCP server with fictional campus tools.
